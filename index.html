@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infocomm Attendance Checker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 520px;
+            margin: 48px auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(44,62,80,0.12);
+            padding: 38px 44px 32px 44px;
+            position: relative;
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(90deg, #2d8cf0 0%, #a259c6 100%);
+            color: #fff;
+            padding: 22px 0 16px 0;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+            margin: -38px -44px 28px -44px;
+            box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.1rem;
+            letter-spacing: 1px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            background: #f7faff;
+            border-radius: 6px;
+            padding: 8px 12px;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 3px rgba(44,62,80,0.04);
+        }
+        li:hover {
+            background: #e3f0ff;
+            box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+        }
+        input[type="checkbox"] {
+            accent-color: #2d8cf0;
+            width: 18px;
+            height: 18px;
+        }
+        label {
+            margin-left: 12px;
+            font-size: 1.08rem;
+            letter-spacing: 0.2px;
+        }
+        button {
+            display: block;
+            margin: 36px auto 0 auto;
+            padding: 12px 36px;
+            background: linear-gradient(90deg, #2d8cf0 0%, #a259c6 100%);
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #1766b3 0%, #7c3fa0 100%);
+            transform: translateY(-2px) scale(1.03);
+        }
+        .results {
+            margin-top: 28px;
+            background: #f0f6ff;
+            border-radius: 10px;
+            padding: 18px 20px 10px 20px;
+            box-shadow: 0 2px 8px rgba(44,62,80,0.06);
+            animation: fadeIn 0.7s;
+        }
+        .results h2 {
+            margin-top: 0;
+            color: #2d8cf0;
+            font-size: 1.15rem;
+        }
+        .results ul {
+            margin-bottom: 12px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px 2vw;
+                max-width: 98vw;
+                margin: 24px auto;
+            }
+            .header {
+                margin: -38px -2vw 24px -2vw;
+                padding: 16px 0 12px 0;
+                font-size: 1.1rem;
+            }
+            .calendar-card {
+                max-width: 98vw;
+                padding: 12px 8px;
+            }
+            .tab-buttons {
+                gap: 6px;
+                margin-top: 18px;
+            }
+            .tab-buttons button {
+                padding: 14px 10vw;
+                font-size: 1.08rem;
+                border-radius: 10px 10px 0 0;
+            }
+            li {
+                padding: 12px 6px;
+                font-size: 1.08rem;
+            }
+            label {
+                font-size: 1.13rem;
+                margin-left: 16px;
+            }
+            input[type="checkbox"] {
+                width: 26px;
+                height: 26px;
+            }
+            .bulk-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            .bulk-buttons button {
+                width: 100%;
+                font-size: 1.08rem;
+            }
+        }
+        .calendar-section {
+            margin-top: 40px;
+        }
+        .calendar-card {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, #f7e8ff 0%, #e3f0ff 100%);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(162,89,198,0.08);
+            padding: 16px 22px;
+            margin-top: 18px;
+            max-width: 350px;
+        }
+        .calendar-date {
+            background: #a259c6;
+            color: #fff;
+            border-radius: 8px;
+            width: 54px;
+            height: 54px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-right: 18px;
+        }
+        .calendar-date .month {
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+        }
+        .calendar-date .day {
+            font-size: 1.5rem;
+            margin-top: -2px;
+        }
+        .calendar-details {
+            display: flex;
+            flex-direction: column;
+        }
+        .event-title {
+            font-size: 1.13rem;
+            color: #2d3a4b;
+            font-weight: 600;
+        }
+        .event-time {
+            font-size: 0.98rem;
+            color: #7c3fa0;
+            margin-top: 2px;
+        }
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 32px;
+        }
+        .tab-buttons button {
+            background: #fff;
+            color: #a259c6;
+            border: 2px solid #a259c6;
+            border-radius: 7px 7px 0 0;
+            padding: 10px 32px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            outline: none;
+        }
+        .tab-buttons button.active, .tab-buttons button:hover {
+            background: linear-gradient(90deg, #a259c6 0%, #2d8cf0 100%);
+            color: #fff;
+            border-bottom: 2px solid #fff;
+        }
+        .bulk-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+        .bulk-buttons button {
+            background: #fff;
+            color: #2d8cf0;
+            border: 2px solid #2d8cf0;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .bulk-buttons button:hover {
+            background: #2d8cf0;
+            color: #fff;
+        }
+        #attendanceTab, #eventsTab {
+            animation: fadeIn 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="tab-buttons">
+        <button id="attendanceTabBtn" class="active" onclick="showTab('attendance')">Attendance</button>
+        <button id="eventsTabBtn" onclick="showTab('events')">Upcoming Events</button>
+    </div>
+    <div id="attendanceTab">
+        <div class="container">
+            <div class="header">
+                <h1>Infocomm Attendance Checker</h1>
+            </div>
+            <div class="bulk-buttons">
+                <button type="button" onclick="markAll(true)">Mark All Present</button>
+                <button type="button" onclick="markAll(false)">Mark All Absent</button>
+            </div>
+            <form id="attendanceForm">
+                <ul id="nameList">
+                    <!-- Names will be inserted here by JS -->
+                </ul>
+                <button type="button" onclick="showResults()">Show Attendance</button>
+            </form>
+            <div class="results" id="results" style="display:none;"></div>
+        </div>
+    </div>
+    <div id="eventsTab" style="display:none;">
+        <div class="container" style="max-width: 400px; margin-top: 48px;">
+            <div class="header" style="background: linear-gradient(90deg, #a259c6 0%, #2d8cf0 100%);">
+                <h1 style="font-size:1.5rem;">2026 Events Calendar</h1>
+            </div>
+            <div class="calendar-card" style="margin-top:32px;">
+                <div class="calendar-date">
+                    <span class="month">Feb</span>
+                    <span class="day">6</span>
+                </div>
+                <div class="calendar-details">
+                    <div class="event-title">Perse Coding</div>
+                    <div class="event-time">3:00 – 4:00 pm</div>
+                </div>
+            </div>
+            <div class="calendar-card" style="margin-top:18px;">
+                <div class="calendar-date">
+                    <span class="month">Feb</span>
+                    <span class="day">20</span>
+                </div>
+                <div class="calendar-details">
+                    <div class="event-title">NOAI</div>
+                    <div class="event-time">9:30 – 12:35 pm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const names = [
+            "Rungvittayanun Napassanun",
+            "Chia Kia Min, Val",
+            "Zoey Mun",
+            "Genesis Low",
+            "Xu Zihan",
+            "Uma Nanthini Santhosh",
+            "Megan Sek",
+            "Anya Hope Rayner",
+            "Annabelle Ye",
+            "La Wun Eain",
+            "Tan Zi Ying",
+            "Sarah Hou",
+            "Chloe Ang",
+            "Sanjana Mahesh",
+            "Charlene Tan",
+            "Suzannah Chee",
+            "Marissa Khoo",
+            "Shiza Khan ",
+            "Sim Xin Yu",
+            "Lin Pinyi Rachel",
+            "Kiersten Lim Kai Shi",
+            "Elly Moo",
+            "La Thi Thao Nguyen",
+            "Chit Hnin San",
+            "Akshayah Thevaranjan",
+            "Ann Chris ",
+            "Amelia Yap",
+            "Myra kahwaja",
+            "Felice Catherine Hendra"
+        ];
+        const nameList = document.getElementById('nameList');
+        names.forEach((name, idx) => {
+            const li = document.createElement('li');
+            li.innerHTML = `<input type="checkbox" id="name${idx}" name="attendance" value="${name}"><label for="name${idx}">${name}</label>`;
+            nameList.appendChild(li);
+        });
+        function showResults() {
+            const checkboxes = document.querySelectorAll('input[name="attendance"]');
+            let present = [], absent = [];
+            checkboxes.forEach((cb, i) => {
+                if (cb.checked) present.push(names[i]);
+                else absent.push(names[i]);
+            });
+            let html = `<h2>Present (${present.length})</h2><ul>` + present.map(n => `<li>${n}</li>`).join('') + '</ul>';
+            html += `<h2>Absent (${absent.length})</h2><ul>` + absent.map(n => `<li>${n}</li>`).join('') + '</ul>';
+            const results = document.getElementById('results');
+            results.innerHTML = html;
+            results.style.display = 'block';
+        }
+        function markAll(present) {
+            const checkboxes = document.querySelectorAll('input[name="attendance"]');
+            checkboxes.forEach(cb => cb.checked = present);
+        }
+        function showTab(tab) {
+            document.getElementById('attendanceTab').style.display = tab === 'attendance' ? '' : 'none';
+            document.getElementById('eventsTab').style.display = tab === 'events' ? '' : 'none';
+            document.getElementById('attendanceTabBtn').classList.toggle('active', tab === 'attendance');
+            document.getElementById('eventsTabBtn').classList.toggle('active', tab === 'events');
+        }
+    </script>
+</body>
+</html>
